@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: converter
+  labels:
+    purpose: deployment
+    app: service-converter
+    component: converter
+spec:
+  containers:
+  - name: converter-container
+    image: ghcr.io/adyanth/docker-k8s-final-assessment:converter-latest
+    env:
+    - name: SERVE_PATH
+      value: "convert"
+    - name: PART_OF
+      valueFrom:
+        configMapKeyRef:
+          name: config
+          key: part_of
+

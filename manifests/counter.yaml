@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter
+  labels:
+    purpose: service
+    app: service-converter
+    component: converter
+spec:
+  containers:
+  - name: counter-container
+    image: ghcr.io/adyanth/docker-k8s-final-assessment:counter-latest
+    volumeMounts:
+    - mountPath: /test-counter
+      name: test-volume
+    env:
+    - name: FILENAME
+      value: "dump.txt"
+    - name: SERVE_PATH
+      value: "count"
+    - name: PART_OF
+      valueFrom:
+        configMapKeyRef:
+          name: config
+          key: part_of
+    - name: IDENTITY
+      valueFrom:
+        secretKeyRef:
+          name: confidential
+          key: identity
+  volumes:
+    - name: test-volume
+      persistentVolumeClaim:
+        claimName: pv-claim
+      hostPath:
+        path: /data
+        type: Directory
+  restartPolicy: Never
